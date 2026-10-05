@@ -1,0 +1,318 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VIRA v10.17 · Puente seguro</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root{--p:#6650e8;--c:#22cbd1;--ink:#151633;--muted:#77788d;--line:#ececf4;--lav:#f2efff}
+*{box-sizing:border-box}body{margin:0;background:#eeeef4;font-family:Arial,sans-serif;color:var(--ink)}button,input,textarea{font:inherit}.app{max-width:430px;margin:auto;min-height:100vh;background:linear-gradient(#fbfaff,#fff 42%);padding:24px 20px 95px}.screen{display:none}.active{display:block}.brand{display:flex;gap:10px;align-items:center}.mark{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--p),var(--c));display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px}.vira{font-size:27px;font-weight:800;letter-spacing:4px}.desc{font-size:9px;letter-spacing:2px;color:var(--muted)}h1{font-size:25px;margin:30px 0 5px}.lead{font-size:13px;line-height:1.5;color:var(--muted)}
+.searchbox{display:flex;margin-top:20px;border:2px solid #e7e2fb;border-radius:18px;background:#fff;padding:3px}.searchbox input{width:100%;border:0;outline:0;padding:14px}.searchbox button{width:50px;border:0;border-radius:14px;background:var(--p);color:#fff}.upload{margin-top:20px;border:2px dashed #d9d4f4;border-radius:20px;padding:25px 15px;text-align:center;background:#fbfaff}.upload input{display:none}.upload label{display:inline-block;background:var(--p);color:#fff;border-radius:14px;padding:13px 17px;font-weight:700}.field{margin-top:13px}.field label{display:block;font-size:11px;font-weight:700;margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid #ddddea;border-radius:14px;padding:13px;outline:0}.field textarea{min-height:60px}.primary{width:100%;border:0;border-radius:16px;background:linear-gradient(135deg,var(--p),#4933cb);color:#fff;padding:15px;font-weight:700;margin-top:14px}
+.pages{display:flex;gap:8px;overflow-x:auto;margin-top:13px;padding-bottom:3px}.page{min-width:72px;width:72px}.page img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.page div{font-size:9px;text-align:center;color:var(--muted);margin-top:4px}
+.pageTools{display:flex!important;gap:3px;justify-content:center;margin-top:5px!important}
+.pageTools button{border:0;border-radius:7px;background:#f0eef9;color:var(--p);font-size:10px;padding:4px 6px}
+.hit{margin-top:7px;font-size:10px;font-weight:700;color:#4d3bc4}.memory{margin-top:15px;border-radius:20px;padding:16px;background:linear-gradient(135deg,#f0edff,#e8fbf8);border:1px solid #e5e0fb}.memory strong{font-size:13px;color:var(--p)}.progress{height:7px;border-radius:9px;background:#e5e4ed;overflow:hidden;margin-top:10px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--p),var(--c))}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{font-size:9px;font-weight:700;background:#fff;border:1px solid #e4e1f2;border-radius:99px;padding:6px 8px}
+.card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;margin-top:12px}.row{display:flex;gap:12px;align-items:center}.thumb{width:50px;height:50px;border-radius:13px;background:var(--lav);display:grid;place-items:center;flex:none;font-size:20px}.card b{font-size:13px}.muted{font-size:10px;color:var(--muted);margin-top:4px}.facts{font-size:10px;color:#42425a;margin-top:6px}.actions{display:flex;gap:7px;margin-top:11px}.actions button{flex:1;border:0;border-radius:11px;padding:9px;background:#f2f1f8;font-size:10px;font-weight:700}.back{border:0;background:none;color:var(--p);font-weight:700;padding:0}.viewer{margin-top:15px;text-align:center}.viewer img{max-width:100%;max-height:60vh;border-radius:14px}.viewerNav{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.viewerNav button{border:0;border-radius:12px;padding:10px 14px;background:var(--lav);color:var(--p);font-weight:700}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;display:flex;justify-content:space-around;background:#fffd;border-top:1px solid var(--line);padding:11px}.nav button{border:0;background:none;color:#777;font-size:10px}.fab{width:48px;height:48px;border-radius:16px!important;background:linear-gradient(135deg,var(--p),var(--c))!important;color:#fff!important;font-size:23px!important}.empty{text-align:center;color:var(--muted);font-size:12px;padding:35px 15px}.toast{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);max-width:390px;width:calc(100% - 40px);background:#191832;color:#fff;padding:13px;border-radius:14px;font-size:11px;z-index:20}
+
+.nav{display:grid!important;grid-template-columns:repeat(5,1fr)!important;align-items:end}
+.nav>button{width:100%;min-width:0;padding-left:1px!important;padding-right:1px!important;font-size:10px}
+.nav .fab{position:static!important;transform:none!important;margin:0 auto!important}
+
+.firstGuide{margin:14px 0 18px;padding:14px 16px;border-radius:18px;background:#f5f2ff;line-height:1.55;font-size:13px}
+.firstGuide b{display:block;margin-bottom:5px;font-size:14px}
+
+.guideStep{display:flex;gap:11px;align-items:center;margin-top:10px}
+.guideStep>span{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:white;font-size:18px;font-weight:800;flex:0 0 34px}
+.guideStep strong,.guideStep small{display:block}
+.guideStep small{opacity:.7;margin-top:1px}
+.saveHint{font-size:13px;line-height:1.45;opacity:.72;margin:-4px 0 14px}
+.analysisBadge{font-size:11px;margin-top:5px;opacity:.78}
+</style></head><body><main class="app">
+<section id="home" class="screen active"><div class="brand"><div class="mark">V✦</div><div><div class="vira">VIRA</div><div class="desc">TU MEMORIA DIGITAL</div></div></div><h1>¿Qué necesitás recordar?</h1><div class="lead">Una memoria puede tener una foto o muchas páginas. Ahora VIRA también entiende mejor los importes.</div><div class="searchbox"><input id="homeq" placeholder="Compra del súper, importe, fecha..." onkeydown="if(event.key==='Enter')searchFrom('homeq')"><button onclick="searchFrom('homeq')">⌕</button></div><button class="primary" style="margin-top:12px" onclick="openVisionLab()">✦ ENTENDER UNA MEMORIA YA GUARDADA</button><h1 style="font-size:17px">Recientes</h1><div class="firstGuide"><b>¿Primera vez en VIRA?</b>
+    <div class="guideStep"><span>＋</span><div><strong>Guardá</strong><small>Elegí una foto, captura o documento.</small></div></div>
+    <div class="guideStep"><span>✦</span><div><strong>VIRA recuerda</strong><small>Lee y organiza lo que guardaste.</small></div></div>
+    <div class="guideStep"><span>⌕</span><div><strong>Encontrá</strong><small>Buscá usando lo que recuerdes.</small></div></div>
+    </div><div id="recent"></div></section>
+<section id="save" class="screen"><button class="back" onclick="go('home')">← Volver</button><h1>Nueva memoria</h1><div class="lead">Seleccioná todas las páginas del mismo recuerdo. Después podés ordenarlas o quitar las que no correspondan.</div><div class="upload"><input id="files" type="file" accept="image/*" multiple onchange="picked(this)"><label for="files">＋ ELEGIR PÁGINAS</label><div id="picked" class="muted" style="margin-top:11px">Ninguna seleccionada</div><div id="previews" class="pages"></div></div><div id="analysis" style="display:none"><div class="memory"><strong id="status">✦ VIRA está recordando…</strong><div class="progress"><div id="bar" class="bar"></div></div><div id="chips" class="chips"></div></div></div><div id="form" style="display:none"><div class="field"><label>Título de esta memoria</label><input id="title"></div><div class="field"><label>Nota opcional</label><textarea id="note" placeholder="Ej. compra mensual del súper"></textarea></div><button class="primary" onclick="saveMemory()">GUARDAR MEMORIA COMPLETA</button></div></section>
+<section id="find" class="screen"><button class="back" onclick="go('home')">← Volver</button><h1>Encontrar</h1><div class="lead">VIRA relaciona lo que recordás y te lleva directamente a la página correcta.</div><div class="searchbox"><input id="q" placeholder="¿Qué querés encontrar?" onkeydown="if(event.key==='Enter')runSearch()"><button onclick="runSearch()">⌕</button></div><div id="results"></div></section>
+<section id="saved" class="screen"><button class="back" onclick="go('home')">← Volver</button><h1>Guardados</h1><div class="lead">Acá está todo lo que decidiste guardar.</div><div id="savedList"></div></section>
+<section id="trash" class="screen"><button class="back" onclick="go('home')">← Volver</button><h1>Papelera</h1><div class="lead">Lo que eliminás queda acá para que puedas recuperarlo.</div><div id="trashList"></div></section>
+<section id="view" class="screen"><button class="back" onclick="go('home')">← Volver</button><h1 id="viewTitle">Memoria</h1><div id="viewMeta" class="lead"></div><div class="viewer"><img id="viewImg"><div class="viewerNav"><button onclick="movePage(-1)">←</button><b id="pageCount"></b><button onclick="movePage(1)">→</button></div></div></section>
+
+<section id="visionLab" class="screen">
+  <button class="back" onclick="go('home')">← Volver</button>
+  <h1>✦ Entender una memoria</h1>
+  <div class="lead">Primero guardala normalmente. Después elegila acá para que VIRA lea manuscritos y objetos.</div>
+  <div id="visionMemories"></div>
+  <div id="visionBox" class="memory" style="display:none">
+    <strong id="visionChosen">Memoria elegida</strong>
+    <div class="field"><label>Clave Gemini</label><input id="visionKey" type="password" autocomplete="off" placeholder="Pegá tu clave"></div>
+    <button class="primary" onclick="visionAnalyze()">✦ ENTENDER AHORA</button>
+    <div id="visionStatus" class="lead" style="margin-top:10px"></div>
+  </div>
+</section>
+</main><nav class="nav"><button onclick="go('home')">⌂<br>Inicio</button><button onclick="go('find')">⌕<br>Encontrar</button><button class="fab" onclick="go('save')">＋</button><button onclick="openSaved()">▦<br>Guardados</button><button onclick="openTrash()">🗑<br>Papelera</button></nav><div id="toast" class="toast"></div>
+<script>
+function viraDigits(v){return String(v||'').replace(/\D/g,'');}
+function viraPhoneMatch(query,text){
+  const q=viraDigits(query);
+  if(q.length<7) return false;
+  const t=viraDigits(text);
+  return t.includes(q);
+}
+
+let db,files=[],texts=[],facts={},viewer=null,page=0,viewUrl=null;
+const req=indexedDB.open('VIRA_DB_V6',1);req.onupgradeneeded=e=>{db=e.target.result;db.createObjectStore('memories',{keyPath:'id',autoIncrement:true})};req.onsuccess=e=>{db=e.target.result;renderRecent()};
+function toast(m){alert(m)}
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0);if(id==='home')renderRecent()}
+async function picked(inp){files=Array.from(inp.files||[]);if(!files.length)return;texts=new Array(files.length).fill('');facts={kind:'Pendiente de análisis',amounts:[],amountKeys:[],phones:[],dates:[]};renderPreviews();document.getElementById('analysis').style.display='block';document.getElementById('form').style.display='block';document.getElementById('chips').innerHTML='';document.getElementById('title').value='Memoria de '+files.length+' página'+(files.length>1?'s':'');setStatus('✓ Listo para guardar. VIRA analizará después.',0)}
+function renderPreviews(){document.getElementById('picked').textContent=files.length+' página'+(files.length>1?'s':'')+' seleccionada'+(files.length>1?'s':'');let prev=document.getElementById('previews');prev.innerHTML='';files.forEach((f,i)=>{let u=URL.createObjectURL(f);prev.innerHTML+=`<div class="page"><img src="${u}" onload="setTimeout(()=>URL.revokeObjectURL('${u}'),1500)"><div>Página ${i+1}</div><div class="pageTools"><button onclick="shiftPage(${i},-1)">←</button><button onclick="removePage(${i})">×</button><button onclick="shiftPage(${i},1)">→</button></div></div>`})}
+function shiftPage(i,d){let j=i+d;if(j<0||j>=files.length)return;[files[i],files[j]]=[files[j],files[i]];[texts[i],texts[j]]=[texts[j],texts[i]];renderPreviews();refreshAnalysis()}
+function removePage(i){files.splice(i,1);texts.splice(i,1);if(!files.length){document.getElementById('files').value='';document.getElementById('previews').innerHTML='';document.getElementById('picked').textContent='Ninguna seleccionada';document.getElementById('analysis').style.display='none';document.getElementById('form').style.display='none';return}renderPreviews();refreshAnalysis()}
+function refreshAnalysis(){let combined=texts.join('\n');facts=extract(combined);renderFacts();document.getElementById('title').value=suggest(combined,facts)}
+function amountKey(s){let x=String(s||'').replace(/[^\d.,]/g,'').trim();if(!x)return'';if(x.includes(',')&&x.includes('.'))x=x.replace(/\./g,'').replace(',','.');else if(x.includes(','))x=x.replace(',','.');else if((x.match(/\./g)||[]).length>1)x=x.replace(/\./g,'');else if(/^\d{1,3}\.\d{3}$/.test(x))x=x.replace('.','');let n=Number(x);if(!Number.isFinite(n))return x.replace(/\D/g,'');return String(n)}
+function numericForms(s){let raw=String(s||''),digits=raw.replace(/\D/g,'');let forms=[raw,amountKey(raw),digits];let m=raw.match(/[\d][\d.,\s]*/g)||[];m.forEach(v=>{forms.push(v,amountKey(v),v.replace(/\D/g,''))});return forms.filter(Boolean)}
+function extract(t){
+ let c=t.replace(/\s+/g,' '),n=norm(c),f={kind:'Documento multipágina',amounts:[],amountKeys:[],phones:[],dates:[],total:'',mainDate:'',summary:''};
+ f.amounts=[...new Set(c.match(/\$\s?[\d.]+(?:,\d{1,2})?/g)||[])].slice(0,12);
+ f.amountKeys=[...new Set(f.amounts.flatMap(numericForms))];
+ f.phones=[...new Set(c.match(/(?:\+?54\s?)?(?:\(?\d{2,4}\)?[\s-]?)?\d{3,4}[\s-]\d{3,4}/g)||[])].slice(0,4);
+ f.dates=[...new Set(c.match(/\b(?:0?[1-9]|[12]\d|3[01])[\/.-](?:0?[1-9]|1[0-2])[\/.-](?:20)?\d{2}\b/g)||[])].slice(0,5);
+ f.mainDate=f.dates[0]||'';
+ if(/supermercado|mercado|ticket|compra|subtotal/.test(n))f.kind='Compra / supermercado';
+ else if(/factura|comprobante|pagado|pago|vencimiento|importe|transferencia/.test(n))f.kind='Pago / comprobante';
+ else if(/invitad|evento|acto|ceremonial|autoridades/.test(n))f.kind='Evento / trabajo';
+ else if(/universidad|unpa|alumno|expediente|resolucion/.test(n))f.kind='Documento / estudio';
+ let totals=[...c.matchAll(/(?:total(?:\s+a\s+pagar)?|importe\s+total|a\s+pagar)\s*[:$]?\s*(\$?\s*\d+(?:[.\s]\d{3})*(?:,\d{1,2})?)/gi)];
+ if(totals.length)f.total=totals[totals.length-1][1].trim();
+ f.summary=[f.kind,f.mainDate?('Fecha '+f.mainDate):'',f.total?('Total '+f.total):''].filter(Boolean).join(' · ');
+ return f
+}
+function renderFacts(){let a=[facts.kind,...facts.amounts,...facts.dates].filter(Boolean);document.getElementById('chips').innerHTML=a.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}
+function suggest(t,f){if(f.kind==='Compra / supermercado')return 'Compra de supermercado'+(f.amounts.length?' · '+f.amounts[f.amounts.length-1]:'');if(f.kind!=='Documento multipágina')return f.kind+(f.amounts[0]?' · '+f.amounts[0]:'');let l=t.split('\n').map(x=>x.trim()).find(x=>x.length>4);return l?l.slice(0,60):'Memoria de '+files.length+' páginas'}
+function setStatus(s,p){document.getElementById('status').textContent=s;document.getElementById('bar').style.width=p+'%'}
+async function ocrCopy(file){
+ return new Promise(resolve=>{let img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{let k=Math.min(1,1200/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*k));c.height=Math.max(1,Math.round(img.naturalHeight*k));c.getContext('2d',{alpha:false}).drawImage(img,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(u);resolve(b||file)},'image/jpeg',0.72)};img.onerror=()=>{URL.revokeObjectURL(u);resolve(file)};img.src=u})
+}
+async function rememberLater(id){
+ let rq=db.transaction('memories','readonly').objectStore('memories').get(id);
+ rq.onsuccess=async()=>{let x=rq.result;if(!x)return;try{let w=await Tesseract.createWorker('spa',1),tt=[];
+  for(let i=0;i<x.pages.length;i++){let small=await ocrCopy(x.pages[i].blob);let r=await w.recognize(small);tt.push((r.data.text||'').trim());await new Promise(z=>setTimeout(z,120))}
+  await w.terminate();let combined=tt.join('\n'),ff=extract(combined);x.pages=x.pages.map((p,i)=>({...p,text:tt[i]||''}));x.ocr=combined;x.facts=ff;x.meta=[ff.kind,ff.total||'',ff.mainDate||'',ff.summary||'',...ff.amounts,...(ff.amountKeys||[]),...ff.phones,...ff.dates].join(' ');x.analysisState=combined.trim()?'done':'empty';
+  if(/^Memoria de \d+ página/.test(x.title))x.title=suggest(combined,ff);
+  let wt=db.transaction('memories','readwrite');wt.objectStore('memories').put(x);wt.oncomplete=()=>renderRecent()
+ }catch(e){}}
+}
+function resetSaveForm(){
+ files=[];texts=[];facts={};
+ let fi=document.getElementById('files'); if(fi)fi.value='';
+ let pr=document.getElementById('previews'); if(pr)pr.innerHTML='';
+ let pk=document.getElementById('picked'); if(pk)pk.textContent='Ninguna seleccionada';
+ let an=document.getElementById('analysis'); if(an)an.style.display='none';
+ let fo=document.getElementById('form'); if(fo)fo.style.display='none';
+ let ti=document.getElementById('title'); if(ti)ti.value='';
+ let no=document.getElementById('note'); if(no)no.value='';
+ let ch=document.getElementById('chips'); if(ch)ch.innerHTML='';
+}
+function saveMemory(){
+ if(!files.length)return;
+ let title=document.getElementById('title').value.trim()||('Memoria de '+files.length+' páginas'),note=document.getElementById('note').value.trim();
+ let pages=files.map(f=>({name:f.name,type:f.type,size:f.size,blob:f,text:''}));
+ let item={title,note,pages,inTrash:false,analysisState:'pending',ocr:'',facts:{kind:'Pendiente de análisis',amounts:[],amountKeys:[],phones:[],dates:[]},meta:'',date:Date.now()};
+ let tx=db.transaction('memories','readwrite'),rq=tx.objectStore('memories').add(item);
+ rq.onsuccess=()=>{let id=rq.result;resetSaveForm();go('home');renderRecent();setTimeout(()=>rememberLater(id),400)}
+}
+function one(id,cb){
+ if(!db){toast('VIRA todavía está iniciando.');return}
+ let r=db.transaction('memories','readonly').objectStore('memories').get(id);
+ r.onsuccess=()=>{if(r.result)cb(r.result);else toast('No pude encontrar esta memoria.')};
+ r.onerror=()=>toast('No pude abrir esta memoria.');
+}
+function getAll(cb){let r=db.transaction('memories').objectStore('memories').getAll();r.onsuccess=()=>cb(r.result.filter(x=>x.inTrash!==true).sort((a,b)=>b.date-a.date))}
+function renderRecent(){if(!db)return;getAll(a=>document.getElementById('recent').innerHTML=a.length?a.slice(0,5).map(card).join(''):'<div class="empty">Tocá ＋ y seleccioná, por ejemplo, las 3 fotos de una misma compra.</div>')}
+function openSaved(){go('saved');getAll(a=>{let el=document.getElementById('savedList');el.innerHTML=a.length?a.map(x=>card(x)).join(''):'<div class="empty">Todavía no guardaste ninguna memoria.</div>'})}
+
+function moveToTrash(id){
+ if(!confirm('¿Mover esta memoria a la Papelera?'))return;
+ one(id,x=>{if(!x)return;x.inTrash=true;x.deletedAt=Date.now();let tx=db.transaction('memories','readwrite');tx.objectStore('memories').put(x);
+ tx.oncomplete=()=>{renderRecent();toast('Memoria movida a Papelera');let saved=document.getElementById('saved');if(saved.classList.contains('active'))openSaved()}})
+}
+function getTrash(cb){
+ let r=db.transaction('memories','readonly').objectStore('memories').getAll();
+ r.onsuccess=()=>cb(r.result.filter(x=>x.inTrash===true).sort((a,b)=>(b.deletedAt||0)-(a.deletedAt||0)))
+}
+function openTrash(){
+ go('trash');getTrash(a=>{let el=document.getElementById('trashList');
+ el.innerHTML=a.length?a.map(x=>`<div class="card"><div class="row"><div class="thumb">🗑️</div><div><b>${esc(x.title)}</b><div class="muted">${x.pages.length} página${x.pages.length>1?'s':''}</div></div></div><div class="actions"><button onclick="restoreMemory(${x.id})">RESTAURAR</button><button onclick="purgeMemory(${x.id})">BORRAR DEFINITIVAMENTE</button></div></div>`).join(''):'<div class="empty">La Papelera está vacía.</div>'})
+}
+function restoreMemory(id){
+ one(id,x=>{if(!x)return;x.inTrash=false;delete x.deletedAt;let tx=db.transaction('memories','readwrite');tx.objectStore('memories').put(x);
+ tx.oncomplete=()=>{openTrash();renderRecent();toast('Memoria restaurada ✓')}})
+}
+function purgeMemory(id){
+ if(!confirm('¿Borrar definitivamente? Esta acción no se puede deshacer.'))return;
+ let tx=db.transaction('memories','readwrite');tx.objectStore('memories').delete(id);
+ tx.oncomplete=()=>{openTrash();toast('Memoria eliminada definitivamente')}
+}
+function card(x,hit='',targetPage=0){
+ if(typeof hit!=='string')hit='';
+ if(!Number.isInteger(targetPage))targetPage=0;
+ let f=x.facts||{},sum=f.summary||[...(f.amounts||[]),...(f.dates||[])].slice(0,2).join(' · ');
+ let ast=x.analysisState||(String(x.ocr||'').trim()?'done':((f.kind&&f.kind!=='Pendiente de análisis')?'done':'pending'));
+ let analysisLabel=ast==='done'?'✦ VIRA recordó esta imagen ✓':ast==='empty'?'⚠ VIRA no pudo leer texto en esta imagen':'✦ VIRA está recordando…';
+ let pageLabel=targetPage>0?` · PÁG. ${targetPage+1}`:'';
+ return `<div class="card"><div class="row"><div class="thumb">🗂️</div><div><b>${esc(x.title)}</b><div class="muted">✦ ${x.pages.length} página${x.pages.length>1?'s':''} · ${esc(f.kind||'Memoria')}</div><div class="analysisBadge">${analysisLabel}</div>${sum?'<div class="facts">'+esc(sum)+'</div>':''}${hit?'<div class="hit">✦ '+esc(hit)+'</div>':''}</div></div><div class="actions"><button onclick="openMemory(${x.id},${targetPage})">ABRIR${pageLabel}</button><button onclick="shareMemory(${x.id})">↗ COMPARTIR</button><button onclick="moveToTrash(${x.id})">ELIMINAR</button></div></div>`
+}
+function searchFrom(id){let q=document.getElementById(id).value;go('find');document.getElementById('q').value=q;runSearch()}
+function queryAmountKey(raw){
+  let s=String(raw||'').trim().replace(/\s/g,'').replace(/^\$/,'');
+  if(!/^\d[\d.,]*$/.test(s))return '';
+  if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');
+  else if(s.includes(','))s=s.replace(',','.');
+  else if((s.match(/\./g)||[]).length>1)s=s.replace(/\./g,'');
+  else if(/^\d{1,3}\.\d{3}$/.test(s))s=s.replace('.','');
+  let n=Number(s);
+  return Number.isFinite(n)?String(n):'';
+}
+function exactAmountsInText(t){
+  let c=String(t||'').replace(/\u00a0/g,' ');
+  let matches=c.match(/(?:\$|ARS\s*)?\s*\d+(?:[.\s]\d{3})*(?:,\d{1,2})?|(?:\$|ARS\s*)\s*\d+(?:[.,]\d{1,2})?/gi)||[];
+  let out=[];
+  for(let raw of matches){
+    let v=raw.trim();
+    if(!/[$]|ARS|[.,]/i.test(v))continue;
+    let k=queryAmountKey(v);
+    if(k)out.push({raw:v,key:k});
+  }
+  return out;
+}
+function searchTerms(raw){
+ let stop=new Set(['el','la','los','las','un','una','de','del','en','que','donde','me','mi','mis','por','para','con','archivo','documento']);
+ return norm(raw).replace(/[¿?]/g,' ').split(/\s+/).filter(z=>z.length>1&&!stop.has(z));
+}
+function runSearch(){
+ let raw=document.getElementById('q').value.trim(),q=norm(raw),amountQuery=queryAmountKey(raw),terms=searchTerms(raw);
+ getAll(a=>{let found=[];
+  for(let x of a){
+   if(!q){found.push({x,hit:'',page:0});continue}
+   if(amountQuery){
+    let page=-1,shown='';
+    for(let i=0;i<(x.pages||[]).length;i++){let vals=exactAmountsInText(x.pages[i].text||''),h=vals.find(v=>v.key===amountQuery);if(h){page=i;shown=h.raw;break}}
+    if(page>=0){found.push({x,hit:`VIRA encontró ${shown} en la página ${page+1}`,page});continue}
+    if(viraDigits(raw).length>=7){
+      for(let i=0;i<(x.pages||[]).length;i++){
+        if(viraPhoneMatch(raw,x.pages[i].text||'')){page=i;break}
+      }
+      if(page>=0){found.push({x,hit:`VIRA encontró ese número en la página ${page+1}`,page});continue}
+    }
+    continue;
+   }
+   let pts=(x.pages||[]).map(p=>norm(p.text||'')),global=norm([x.title,x.note,x.meta,x.ocr].join(' '));
+   if(!terms.length||!terms.every(t=>global.includes(t)))continue;
+   let exact=[],best=-1,score=0;
+   pts.forEach((pt,i)=>{let sc=terms.filter(t=>pt.includes(t)).length;if(sc>score){score=sc;best=i}if(terms.every(t=>pt.includes(t)))exact.push(i)});
+   let target=exact.length?exact[0]:Math.max(0,best);
+   let where=exact.length===1?` en la página ${exact[0]+1}`:exact.length>1?` en las páginas ${exact.map(i=>i+1).join(', ')}`:(best>=0?` · mayor coincidencia en página ${best+1}`:'');
+   found.push({x,hit:`VIRA relacionó “${raw}”${where}`,page:target});
+  }
+  document.getElementById('results').innerHTML=found.length?`<div class="memory"><strong>✦ VIRA encontró ${found.length} memoria${found.length==1?'':'s'}</strong></div>`+found.map(r=>card(r.x,r.hit,r.page)).join(''):'<div class="empty">No encontré exactamente eso.<br>Probá combinando datos que recuerdes: origen, persona, tema, fecha o importe.</div>'
+ })
+}
+function openMemory(id,targetPage=0){one(id,x=>{viewer=x;page=Math.max(0,Math.min(targetPage||0,x.pages.length-1));document.getElementById('viewTitle').textContent=x.title;document.getElementById('viewMeta').textContent=x.pages.length+' páginas · '+(x.facts?.kind||'Memoria VIRA');go('view');showPage()})}
+function showPage(){if(viewUrl)URL.revokeObjectURL(viewUrl);let p=viewer.pages[page];viewUrl=URL.createObjectURL(p.blob);document.getElementById('viewImg').src=viewUrl;document.getElementById('pageCount').textContent='Página '+(page+1)+' de '+viewer.pages.length}
+function movePage(d){if(!viewer)return;page=Math.max(0,Math.min(viewer.pages.length-1,page+d));showPage()}
+function shareMemory(id){one(id,async x=>{let fs=x.pages.map(p=>new File([p.blob],p.name,{type:p.type}));try{if(navigator.canShare&&navigator.canShare({files:fs}))await navigator.share({title:x.title,text:x.note,files:fs});else toast('Este navegador no permite compartir varias páginas juntas.')}catch(e){}})}
+function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2400)}
+
+let visionSelectedId=null;
+
+function openVisionLab(){
+  go('visionLab');
+  const savedVisionKey=sessionStorage.getItem('VIRA_GEMINI_KEY')||'';
+  const keyBox=document.getElementById('visionKey');
+  if(keyBox && savedVisionKey) keyBox.value=savedVisionKey;
+  visionSelectedId=null;
+  document.getElementById('visionBox').style.display='none';
+  getAll(a=>{
+    document.getElementById('visionMemories').innerHTML=a.length
+      ? a.map(x=>`<div class="card"><div class="row"><div class="thumb">✦</div><div><b>${esc(x.title)}</b><div class="muted">${x.pages.length} página${x.pages.length>1?'s':''}</div></div></div><div class="actions"><button onclick="chooseVision(${x.id})">ELEGIR</button></div></div>`).join('')
+      : '<div class="empty">Primero guardá una memoria con el ＋.</div>';
+  });
+}
+
+function chooseVision(id){
+  one(id,x=>{
+    visionSelectedId=id;
+    document.getElementById('visionChosen').textContent='✦ '+x.title;
+    document.getElementById('visionBox').style.display='block';
+    document.getElementById('visionStatus').textContent='Lista para analizar. La memoria ya está guardada.';
+    document.getElementById('visionBox').scrollIntoView({behavior:'smooth'});
+  });
+}
+
+function visionToBase64(blob){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(String(r.result).split(',')[1]);
+    r.onerror=reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+async function visionGemini(blob,key){
+  const data=await visionToBase64(blob);
+  const prompt=`Mirá cuidadosamente esta fotografía para VIRA.
+Transcribí todo texto visible, tanto impreso como manuscrito.
+Prestá especial atención a números, importes y teléfonos y conservá puntos, comas y signos visibles.
+Después describí brevemente los objetos o la escena con palabras que una persona usaría para buscar esta imagen.
+Si algo no es legible, no lo inventes.
+Respondé en español, sin markdown.`;
+  const body={contents:[{parts:[
+    {text:prompt},
+    {inline_data:{mime_type:blob.type||'image/jpeg',data:data}}
+  ]}]};
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key='+encodeURIComponent(key),{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok) throw new Error('Gemini '+r.status);
+  const j=await r.json();
+  return ((((j.candidates||[])[0]||{}).content||{}).parts||[]).map(p=>p.text||'').join('\n').trim();
+}
+
+async function visionAnalyze(){
+  const st=document.getElementById('visionStatus');
+  const key=(document.getElementById('visionKey').value||'').trim();
+  if(!visionSelectedId){st.textContent='Elegí una memoria.';return}
+  if(!key){st.textContent='Pegá tu clave de Gemini.';return}
+  sessionStorage.setItem('VIRA_GEMINI_KEY',key);
+  st.textContent='✦ VIRA está entendiendo la memoria…';
+  const rq=db.transaction('memories','readonly').objectStore('memories').get(visionSelectedId);
+  rq.onsuccess=async()=>{
+    const x=rq.result;
+    if(!x){st.textContent='No pude abrir esa memoria.';return}
+    try{
+      const vv=[];
+      for(let i=0;i<x.pages.length;i++){
+        st.textContent=`✦ Entendiendo página ${i+1} de ${x.pages.length}…`;
+        vv.push(await visionGemini(x.pages[i].blob,key));
+      }
+      // Merge only after Gemini has finished. Original blobs are untouched.
+      x.pages=x.pages.map((p,i)=>({...p,visionText:vv[i]||'',text:[p.text||'',vv[i]||''].filter(Boolean).join('\n')}));
+      const visionText=vv.filter(Boolean).join('\n');
+      x.ocr=[x.ocr||'',visionText].filter(Boolean).join('\n');
+      x.meta=[x.meta||'',visionText].filter(Boolean).join(' ');
+      x.visionState='done';
+      const tx=db.transaction('memories','readwrite');
+      tx.objectStore('memories').put(x);
+      tx.oncomplete=()=>{
+        st.textContent='✓ VIRA entendió la memoria. Ya podés buscar lo que leyó.';
+        renderRecent();
+      };
+      tx.onerror=()=>{st.textContent='⚠ La memoria sigue guardada, pero no pude añadir el análisis.'};
+    }catch(e){
+      st.textContent='⚠ Gemini no pudo completar el análisis. La memoria sigue guardada.';
+    }
+  };
+}
+
+</script></body></html>
